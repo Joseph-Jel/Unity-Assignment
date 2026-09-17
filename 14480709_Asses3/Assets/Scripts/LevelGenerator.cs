@@ -101,7 +101,7 @@ public class LevelGenerator : MonoBehaviour
         }
 
         GenerateLevel();
-        AdjustCamer();
+        AdjustCamera();
     }
 
     private void BuildFullMap()
@@ -139,6 +139,49 @@ public class LevelGenerator : MonoBehaviour
         }
     }
 
+
+    private bool SolveWallConnections()
+    {
+        int rows = fullMap.GetLength(0);
+        int columns = fullMap.GetLength(1);
+
+        List<int>[,] possibilities = new List<int>[rows, columns];
+
+        for (int row = 0; row < rows; row++)
+        {
+            for (int column = 0; column < columns; column++)
+            {
+                possibilities[row, column] = GetPossibleConnections(fullMap[row, column]);
+            }
+        }
+
+        if (fullMap[0, 0] == 1)
+        {
+            possibilities[0, 0].Clear();
+
+            possibilities[0, 0].Add(Right | Down);
+        }
+
+        if (!SolvePossibilities(ref possibilities))
+        {
+            return false;
+        }
+
+        solvedConnections = new int[rows, columns];
+
+        for (int row = 0; row < rows; row++)
+        {
+            for (int column = 0; column < columns; column++)
+            {
+                if (possibilities[row, column].Count == 1)
+                {
+                    solvedConnections[row, column] = possibilities[row, column][0];
+                }
+            }
+        }
+
+        return true;
+    }
     // Update is called once per frame
     void Update()
     {
