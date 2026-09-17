@@ -64,8 +64,26 @@ public class LevelGenerator : MonoBehaviour
     [SerializeField] private float ghostExitVerticalRotation = 0f;
 
 
+
+    private const int Up = 1;
+    private const int Down = 4;
+    private const int Left = 8;
+    private const int Right = 2;
+
+    private readonly int[] directions =
+    {
+        Up,
+        Down,
+        Left,
+        Right,
+    };
+
+    private int[,] fullMap;
+    private int[,] solvedConnections;
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void Start()
     {
         
     }
