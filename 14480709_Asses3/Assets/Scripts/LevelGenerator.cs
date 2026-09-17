@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 
 public class LevelGenerator : MonoBehaviour
@@ -43,6 +43,25 @@ public class LevelGenerator : MonoBehaviour
     [SerializeField] private float tileSize = 1f;
     [SerializeField] private float cameraPadding = 1f;
 
+    [Header("Sprite Base Rotations")]
+
+    [Tooltip("Rotation at which the outside corner looks like ┌")]
+    [SerializeField] private float outsideCornerBaseRotation = 0f;
+
+    [Tooltip("Rotation at which the inside corner looks like ┌")]
+    [SerializeField] private float insideCornerBaseRotation = 0f;
+
+    [Tooltip("Rotation at which the outside wall which is vertical")]
+    [SerializeField] private float outsideWallVerticalRotation = 0f;
+
+    [Tooltip("Rotation at which the inside wall which is vertical")]
+    [SerializeField] private float insideWallVerticalRotation = 0f;
+
+    [Tooltip("Rotation at which the T junction looks like ┬")]
+    [SerializeField] private float tJunctionBaseRotation = 0f;
+
+    [Tooltip("Rotation at which the ghost exit wall us vertical")]
+    [SerializeField] private float ghostExitVerticalRotation = 0f;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
