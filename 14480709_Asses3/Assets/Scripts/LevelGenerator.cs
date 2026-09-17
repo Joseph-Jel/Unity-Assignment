@@ -85,7 +85,23 @@ public class LevelGenerator : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Start()
     {
-        
+        if (manualLevel != null)
+        {
+            manualLevel.SetActive(false);
+            Destroy(manualLevel);
+        }
+
+        BuildFullMap();
+
+        if (!SolveWallConnections())
+        {
+            Debug.LogError("LevelGenerator could not determine a valid wall layout.");
+
+            return;
+        }
+
+        GenerateLevel();
+        AdjustCamer();
     }
 
     // Update is called once per frame
