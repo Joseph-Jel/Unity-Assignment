@@ -182,6 +182,53 @@ public class LevelGenerator : MonoBehaviour
 
         return true;
     }
+
+
+    private List<int> GetPossibleConnections(int tile)
+    {
+        List<int> result = new List<int>();
+
+        switch (tile)
+        {
+            // This is for outside corner as well as inside corner
+            case 1:
+            case 3:
+
+                result.Add(Up | Right);
+                result.Add(Right | Down);
+                result.Add(Down | Left);
+                result.Add(Left | Up);
+
+                break;
+
+            //This is for straight walls or ghost exit
+            case 2:
+            case 4:
+            case 8:
+
+                result.Add(Up | Down);
+                result.Add(Left | Right);
+
+                break;
+
+            //This is for T junction
+            case 7:
+
+                result.Add(Left | Right | Down);
+                result.Add(Up |  Down | Left);
+                result.Add(Up | Left | Right);
+                result.Add(Up | Right | Down);
+
+                break;
+
+            default:
+
+                result.Add(0);
+                break;
+        }
+        return result;
+    }
+
     // Update is called once per frame
     void Update()
     {
