@@ -229,6 +229,59 @@ public class LevelGenerator : MonoBehaviour
         return result;
     }
 
+
+    private bool SolvePossibilities(ref List<int>[,] possibilities)
+    {
+        if (!Propagate(possibilities))
+        {
+            return false;
+        }
+
+        int bestRow = -1;
+        int bestColumn = -1;
+        int bestCount = int.MaxValue;
+
+        int rows = possibilities.GetLength(0);
+        int columns = possibilities.GetLength(1);
+
+        for (int row  = 0; row < rows; row++)
+        {
+            for (int column = 0; column < columns; column++)
+            {
+                int count = possibilities[row, column].Count;
+
+                if (count > 1 && count < bestCount)
+                {
+                    bestCount = count;
+                    bestRow = row;
+                    bestColumn = column;
+                }
+            }
+        }
+
+        if (bestRow == -1)
+        {
+            return true;
+        }
+
+        List<int> choices = new List<int>(possibilities[bestRow, bestColumn]);
+
+        foreach (int choice in choices)
+        {
+            List<int>[,] attempt = ClonePossibilities(possibilities);
+
+            attempt[bestRow, bestColumn].Clear();
+            attempt[bestRow, bestColumn].Add(choice);
+
+            if (SolvePossibilities(ref attempt))
+            {
+                possibilities = attempt;
+                return true;
+            }
+        }
+
+        return false;  
+    }
     // Update is called once per frame
     void Update()
     {
