@@ -22,6 +22,29 @@ public class LevelGenerator : MonoBehaviour
         {2,2,2,2,2,1,5,3,3,0,4,0,0,0},
         {0,0,0,0,0,0,5,0,0,0,4,0,0,0},
    };
+
+    [Header("Level Piece Prefabs")]
+    [SerializeField] private GameObject outsideCornerPrefab;
+    [SerializeField] private GameObject insideCornerPrefab;
+    [SerializeField] private GameObject outsideWallPrefab;
+    [SerializeField] private GameObject insideWallPrefab;
+    [SerializeField] private GameObject pelletPrefab;
+    [SerializeField] private GameObject powerPelletPrefab;
+    [SerializeField] private GameObject tJunctionPrefab;
+    [SerializeField] private GameObject ghostExitWallPrefab;
+
+
+    [Header("Scene References")]
+    [SerializeField] private GameObject manualLevel;
+    [SerializeField] private Camera gameCamera;
+
+
+    [Header("Generation Settings")]
+    [SerializeField] private float tileSize = 1f;
+    [SerializeField] private float cameraPadding = 1f;
+
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
