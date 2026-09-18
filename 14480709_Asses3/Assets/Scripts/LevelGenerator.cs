@@ -668,6 +668,48 @@ public class LevelGenerator : MonoBehaviour
                 return 0f;
         }
     }
+
+    private float GetCornerRotation(int connections)
+    {
+        if (connections == (Right | Down))
+        {
+            return 0f;
+        }
+
+        if (connections == (Up | Right))
+        {
+            return 90f;
+        }
+
+        if (connections == (Up | Left))
+        {
+            return 180f;
+        }
+
+        if (connections == (Down | Left))
+        {
+            return 270f;
+        }
+
+        return 0f;
+    }
+
+
+    private float GetStraightRotation(int connections)
+    {
+        if (connections == (Up | Down))
+        {
+            return 0f;
+        }
+
+        if (connections == (Left | Right))
+        {
+            return 90f;
+        }
+
+        return 0f;
+    }
+
     // Update is called once per frame
     void Update()
     {
