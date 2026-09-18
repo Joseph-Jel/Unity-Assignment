@@ -506,6 +506,26 @@ public class LevelGenerator : MonoBehaviour
                 break;
         }
     }
+
+
+    private void GenerateLevel()
+    {
+        int sourceRows = levelMap.GetLength(0);
+
+        int sourceColumns = levelMap.GetLength(1);
+
+        int fullRows = (sourceRows * 2) - 1;
+
+        int fullColumns = sourceColumns * 2;
+
+        GameObject generatedLevel = new GameObject("GeneratedLevel");
+
+
+        //Top-Left:
+        Transform topLeft = CreateQuadrant(generatedLevel.transform, "TopLeft");
+
+        GenerateQuadrant(topLeft, true);
+    }
     // Update is called once per frame
     void Update()
     {
