@@ -389,6 +389,24 @@ public class LevelGenerator : MonoBehaviour
 
         return true;
     }
+
+    private List<int>[,] ClonePossibilities(List<int>[,] original)
+    {
+        int rows = original.GetLength(0);
+        int columns = original.GetLength(1);
+
+        List<int>[,] copy = new List<int>[rows, columns];
+
+        for (int row = 0; row < rows; row++)
+        {
+            for (int column = 0; column < columns; column++)
+            {
+                copy[row, column] = new List<int>(original[row, column]);
+            }
+        }
+
+        return copy;
+    }
     // Update is called once per frame
     void Update()
     {
