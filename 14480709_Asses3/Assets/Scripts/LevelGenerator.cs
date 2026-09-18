@@ -525,6 +525,34 @@ public class LevelGenerator : MonoBehaviour
         Transform topLeft = CreateQuadrant(generatedLevel.transform, "TopLeft");
 
         GenerateQuadrant(topLeft, true);
+
+        //Top-Right:
+        Transform topRight = CreateQuadrant(generatedLevel.transform, "TopRight");
+
+        topRight.localPosition = new Vector3((fullColumns - 1) * tileSize, 0f, 0f);
+
+        topRight.localScale = new Vector3(-1f, 1f, 1f);
+
+        GenerateQuadrant(topRight, true);
+
+
+        //Bottom-Left:
+        Transform bottomLeft = CreateQuadrant(generatedLevel.transform, "BottomLeft");
+
+        bottomLeft.localPosition = new Vector3(0f, -(fullRows - 1) * tileSize, 0f);
+
+        bottomLeft.localScale = new Vector3(1f, -1f, 1f);
+
+        GenerateQuadrant(bottomLeft, false);
+
+        //Bottom-Right:
+        Transform bottomRight = CreateQuadrant(generatedLevel.transform, "BottomRight");
+
+        bottomRight.localPosition = new Vector3((fullColumns - 1) * tileSize, -(fullRows - 1) * tileSize, 0f);
+
+        bottomRight.localScale = new Vector3(-1f, -1f, 1f);
+
+        GenerateQuadrant(bottomRight, false);
     }
     // Update is called once per frame
     void Update()
