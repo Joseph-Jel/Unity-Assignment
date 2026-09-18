@@ -328,7 +328,7 @@ public class LevelGenerator : MonoBehaviour
         return true;
     }
 
-    private bool ConnectionPatternIsPossible(int row, int column, int pattern, List<int> possibilities)
+    private bool ConnectionPatternIsPossible(int row, int column, int pattern, List<int>[,] possibilities)
     {
         for (int i = 0; i < directions.Length; i++)
         {
@@ -386,7 +386,7 @@ public class LevelGenerator : MonoBehaviour
                 return false;
             }
         }
-
+        
         return true;
     }
 
