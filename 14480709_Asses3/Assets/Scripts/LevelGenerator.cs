@@ -354,10 +354,6 @@ public class LevelGenerator : MonoBehaviour
 
             if (!IsInsideMap(neighbourRow, neighbourColumn))
             {
-                if (thisConnects)
-                {
-                    return false;
-                }
 
                 continue;
             }
