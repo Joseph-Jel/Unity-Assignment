@@ -10527,7 +10527,7 @@ MonoBehaviour:
   outsideWallVerticalRotation: 0
   insideWallVerticalRotation: 0
   tJunctionBaseRotation: 0
-  ghostExitVerticalRotation: 0
+  ghostExitVerticalRotation: 90
 --- !u!1 &267541846
 GameObject:
   m_ObjectHideFlags: 0
