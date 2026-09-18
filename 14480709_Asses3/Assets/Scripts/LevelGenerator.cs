@@ -107,35 +107,44 @@ public class LevelGenerator : MonoBehaviour
 
     private void BuildFullMap()
     {
-        int rows = levelMap.GetLength(0);
-        int columns = levelMap.GetLength(1);
+        int sourceRows = levelMap.GetLength(0);
+        int sourceColumns = levelMap.GetLength(1);
 
-        int fullRows = (rows * 2) - 1;
-        int fullColumns = columns * 2;
+        int fullRows = (sourceRows * 2) - 1;
+        int fullColumns = sourceColumns * 2;
 
-        fullMap = new int[fullRows, columns];
+        fullMap = new int[fullRows, fullColumns];
 
-        for (int row = 0; row < rows; row++)
+        for (int row = 0; row < fullRows; row++)
         {
-            for (int column = 0; column < columns; column++)
+
+            int sourceRow;
+
+            if (row < sourceRows)
+            {
+                sourceRow = row;
+            }
+            else
+            {
+                sourceRow = fullRows - 1 - row;
+            }
+
+            for (int column = 0; column < fullColumns; column++)
             {
 
-                int value = levelMap[row, column];
+                int sourceColumn;
 
-                fullMap[row, column] = value;
-
-                int mirroredColumn = fullColumns - 1 - column;
-
-                fullMap[row, mirroredColumn] = value;
-
-                if (row < rows - 1)
+                if (column < sourceColumns)
                 {
-                    int mirroredRow = fullRows - 1 - row;
-
-                    fullMap[mirroredRow, column] = value;
-
-                    fullMap[mirroredRow, mirroredColumn] = value;
+                    sourceColumn = column;
                 }
+
+                else
+                {
+                    sourceColumn = fullColumns - 1 - column;
+                }
+
+                fullMap[row, column] = levelMap[sourceRow, sourceColumn];
             }
         }
     }
