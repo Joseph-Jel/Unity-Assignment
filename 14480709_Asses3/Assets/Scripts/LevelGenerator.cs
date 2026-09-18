@@ -463,6 +463,24 @@ public class LevelGenerator : MonoBehaviour
             && column >= 0
             && column < fullMap.GetLength(1);
     }
+
+    private int Opposite (int direction)
+    {
+        switch (direction)
+        {
+            case Up:
+                return Down;
+
+            case Right:
+                return Left;
+
+            case Down:
+                return Up;
+
+            default:
+                return Right;
+        }
+    }
     // Update is called once per frame
     void Update()
     {
