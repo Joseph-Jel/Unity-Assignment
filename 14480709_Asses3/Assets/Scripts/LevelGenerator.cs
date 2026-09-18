@@ -342,7 +342,7 @@ public class LevelGenerator : MonoBehaviour
 
             bool thisConnects = (pattern & direction) != 0;
 
-            if (!InsideMap(neighbourRow, neighbourColumn))
+            if (!IsInsideMap(neighbourRow, neighbourColumn))
             {
                 if (thisConnects)
                 {
@@ -455,6 +455,13 @@ public class LevelGenerator : MonoBehaviour
         bool secondInside = second == 3 || second == 4; 
 
         return (firstOutside && secondOutside) || (firstInside && secondInside);
+    }
+
+    private bool IsInsideMap (int row, int column)
+    {
+        return row >= 0 && row < fullMap.GetLength(0)
+            && column >= 0
+            && column < fullMap.GetLength(1);
     }
     // Update is called once per frame
     void Update()
