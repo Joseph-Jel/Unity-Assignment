@@ -607,6 +607,67 @@ public class LevelGenerator : MonoBehaviour
             }
         }
     }
+
+    private GameObject GetPrefab(int tile)
+    {
+        switch (tile)
+        {
+            case 1:
+                return outsideCornerPrefab;
+
+            case 2:
+                return outsideWallPrefab;
+
+            case 3:
+                return insideCornerPrefab;
+
+            case 4:
+                return insideWallPrefab;
+
+            case 5:
+                return pelletPrefab;
+
+            case 6:
+                return powerPelletPrefab;
+
+            case 7:
+                return tJunctionPrefab;
+
+            case 8:
+                return ghostExitWallPrefab;
+
+            default:
+                return null;
+        }
+    }
+
+
+    private float GetRotation(int tile, int connections)
+    {
+        switch (tile)
+        {
+            case 1:
+                return outsideCornerBaseRotation + GetCornerRotation(connections);
+
+            case 2:
+                return outsideWallVerticalRotation + GetStraightRotation(connections);
+
+            case 3:
+                return insideCornerBaseRotation + GetCornerRotation(connections);
+
+            case 4:
+                return insideWallVerticalRotation + GetStraightRotation(connections);
+
+            case 7:
+                return tJunctionBaseRotation + GetTJunctionRotation(connections);
+
+            case 8:
+                return ghostExitVerticalRotation + GetStraightRotation(connections);
+
+            default:
+                return 0f;
+        }
+    }
     // Update is called once per frame
     void Update()
     {
