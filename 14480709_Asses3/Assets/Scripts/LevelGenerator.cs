@@ -327,6 +327,68 @@ public class LevelGenerator : MonoBehaviour
 
         return true;
     }
+
+    private bool ConnectionPatternIsPossible(int row, int column, int pattern, List<int> possibilities)
+    {
+        for (int i = 0; i < directions.Length; i++)
+        {
+            int direction = directions[i]; 
+
+            GetDirectionOffset(direction, out int rowOffset, out int columnOffset);
+
+            int neighbourRow = row + rowOffset;
+
+            int neighbourColumn = column + columnOffset;
+
+            bool thisConnects = (pattern & direction) != 0;
+
+            if (!InsideMap(neighbourRow, neighbourColumn))
+            {
+                if (thisConnects)
+                {
+                    return false;
+                }
+
+                continue;
+            }
+
+            int currentTile = fullMap[row, column];
+
+            int neighbourTile = fullMap[neighbourRow, neighbourColumn];
+
+            if (!TilesCanConnect(currentTile, neighbourTile))
+            {
+                if (thisConnects)
+                {
+                    return false;
+                }
+
+                continue;
+            }
+
+            int oppositeDirection = Opposite(direction);
+
+            bool supported = false;
+
+            foreach (int neighbourPattern in possibilities[neighbourRow, neighbourColumn])
+            {
+                bool neighbourConnects = (neighbourPattern & oppositeDirection) != 0;
+
+                if (thisConnects == neighbourConnects)
+                {
+                    supported = true;
+                    break;
+                }
+            }
+
+            if (!supported)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
     // Update is called once per frame
     void Update()
     {
