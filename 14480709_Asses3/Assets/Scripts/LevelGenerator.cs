@@ -153,8 +153,8 @@ public class LevelGenerator : MonoBehaviour
 
     private bool SolveWallConnections()
     {
-        int rows = fullMap.GetLength(0);
-        int columns = fullMap.GetLength(1);
+        int rows = levelMap.GetLength(0);
+        int columns = levelMap.GetLength(1);
 
         List<int>[,] possibilities = new List<int>[rows, columns];
 
@@ -162,7 +162,7 @@ public class LevelGenerator : MonoBehaviour
         {
             for (int column = 0; column < columns; column++)
             {
-                int tile = fullMap[row, column];
+                int tile =  levelMap[row, column];
 
                 if (tile == 2 || tile == 4 || tile == 8)
                 {
@@ -175,7 +175,7 @@ public class LevelGenerator : MonoBehaviour
             }
         }
 
-        if (fullMap[0, 0] == 1)
+        if (levelMap[0, 0] == 1)
         {
             possibilities[0, 0].Clear();
 
@@ -196,6 +196,12 @@ public class LevelGenerator : MonoBehaviour
                 if (possibilities[row, column].Count == 1)
                 {
                     solvedConnections[row, column] = possibilities[row, column][0];
+                }
+                else
+                {
+                    Debug.LogError("Unresolve tile at row " + row + ", column " + column);
+
+                    return false;
                 }
             }
         }
@@ -305,12 +311,12 @@ public class LevelGenerator : MonoBehaviour
 
         int neighbourColumn = column + columnOffset;
 
-        if (!IsInsideMap(neighbourRow, neighbourColumn))
+        if (!IsInsideSourceMap(neighbourRow, neighbourColumn))
         {
             return false;
         }
 
-        int neighbourTile = fullMap[neighbourRow, neighbourColumn];
+        int neighbourTile = levelMap[neighbourRow, neighbourColumn];
 
         return TilesCanConnect(tile, neighbourTile);
     }
@@ -384,7 +390,7 @@ public class LevelGenerator : MonoBehaviour
             {
                 for (int column = 0; column < columns; column++)
                 {
-                    if (!IsWallTile(fullMap[row, column]))
+                    if (!IsWallTile(levelMap[row, column]))
                     {
                         continue;
                     }
@@ -427,15 +433,15 @@ public class LevelGenerator : MonoBehaviour
 
             bool thisConnects = (pattern & direction) != 0;
 
-            if (!IsInsideMap(neighbourRow, neighbourColumn))
+            if (!IsInsideSourceMap(neighbourRow, neighbourColumn))
             {
 
                 continue;
             }
 
-            int currentTile = fullMap[row, column];
+            int currentTile = levelMap[row, column];
 
-            int neighbourTile = fullMap[neighbourRow, neighbourColumn];
+            int neighbourTile = levelMap[neighbourRow, neighbourColumn];
 
             if (!TilesCanConnect(currentTile, neighbourTile))
             {
@@ -495,8 +501,6 @@ public class LevelGenerator : MonoBehaviour
             || tile == 2
             || tile == 3
             || tile == 4
-            || tile == 5
-            || tile == 6
             || tile == 7
             || tile == 8;
     }
@@ -882,6 +886,14 @@ public class LevelGenerator : MonoBehaviour
             default:
                 return "Unknown";
         }
+    }
+
+    private bool IsInsideSourceMap(int row, int column)
+    {
+        return row >= 0
+            && row < levelMap.GetLength(0)
+            && column >= 0
+            && column < levelMap.GetLength(1);
     }
     // Update is called once per frame
     void Update()
