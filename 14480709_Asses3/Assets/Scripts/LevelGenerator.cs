@@ -308,7 +308,7 @@ public class LevelGenerator : MonoBehaviour
 
                     for (int i = current.Count - 1; i >= 0; i--)
                     {
-                        if(!ConnectionPatternIsPossible(row, column, current[i], possibilities))
+                        if (!ConnectionPatternIsPossible(row, column, current[i], possibilities))
                         {
                             current.RemoveAt(i);
                             changed = true;
@@ -479,6 +479,31 @@ public class LevelGenerator : MonoBehaviour
 
             default:
                 return Right;
+        }
+    }
+
+    private void GetDirectionOffset (int direction, out int rowOffset, out int columnOffset)
+    {
+        rowOffset = 0;
+        columnOffset = 0;
+
+        switch(direction)
+        {
+            case Up:
+                rowOffset = -1;
+                break;
+
+            case Right:
+                columnOffset = 1;
+                break;
+
+            case Down:
+                rowOffset = 1;
+                break;
+
+            case Left:
+                columnOffset = -1;
+                break;
         }
     }
     // Update is called once per frame
