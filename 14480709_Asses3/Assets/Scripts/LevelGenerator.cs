@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using Mono.Cecil;
+using UnityEngine.UIElements;
 
 public class LevelGenerator : MonoBehaviour
 {
@@ -161,7 +162,16 @@ public class LevelGenerator : MonoBehaviour
         {
             for (int column = 0; column < columns; column++)
             {
-                possibilities[row, column] = GetPossibleConnections(fullMap[row, column]);
+                int tile = fullMap[row, column];
+
+                if (tile == 2 || tile == 4 || tile == 8)
+                {
+                    possibilities[row, column] = GetStraightPossibilities(row, column, tile);
+                }
+                else
+                {
+                    possibilities[row, column] = GetPossibleConnections(tile);
+                }
             }
         }
 
@@ -239,6 +249,71 @@ public class LevelGenerator : MonoBehaviour
         return result;
     }
 
+    private List<int> GetStraightPossibilities(int row, int column, int tile)
+    {
+        int horizontalConnections = 0;
+        int verticalConnections = 0;
+
+        if (HasCompatibleNeighbour(row, column, tile, Left))
+        {
+            horizontalConnections++;
+        }
+
+        if (HasCompatibleNeighbour(row, column, tile, Right))
+        {
+            horizontalConnections++;
+        }
+
+        if (HasCompatibleNeighbour(row, column, tile, Up))
+        {
+            verticalConnections++;
+        }
+
+        if (HasCompatibleNeighbour(row, column, tile, Down))
+        {
+            verticalConnections++;
+        }
+
+        if (horizontalConnections > verticalConnections)
+        {
+            return new List<int>
+            {
+                Left | Right
+            };
+        }
+
+        if (verticalConnections > horizontalConnections)
+        {
+            return new List<int>
+            {
+                Up | Down
+            };
+        }
+
+        return new List<int>
+        {
+            Up | Down,
+            Left | Right
+        };
+    }
+
+    private bool HasCompatibleNeighbour(int row, int column, int tile, int direction)
+    {
+        GetDirectionOffset(direction, out int rowOffset, out int columnOffset);
+
+        int neighbourRow = row + rowOffset;
+
+        int neighbourColumn = column + columnOffset;
+
+        if (!IsInsideMap(neighbourRow, neighbourColumn))
+        {
+            return false;
+        }
+
+        int neighbourTile = fullMap[neighbourRow, neighbourColumn];
+
+        return TilesCanConnect(tile, neighbourTile);
+    }
 
     private bool SolvePossibilities(ref List<int>[,] possibilities)
     {
