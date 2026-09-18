@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using Mono.Cecil;
 
 public class LevelGenerator : MonoBehaviour
 {
@@ -562,6 +563,49 @@ public class LevelGenerator : MonoBehaviour
         quadrant.transform.SetParent(parent, false);
 
         return quadrant.transform;
+    }
+
+    private void GenerateQuadrant(Transform parent, bool includeBottomRow)
+    {
+        int rows = levelMap.GetLength(0);
+        int columns = levelMap.GetLength(1);
+
+        int rowsToGenerate = includeBottomRow ? rows : rows - 1;
+
+        for (int row  = 0; row < rowsToGenerate; row++)
+        {
+            for (int column = 0; column < columns; column++)
+            {
+                int tile = levelMap[row, column];
+
+                if (tile == 0)
+                {
+                    continue;
+                }
+
+                GameObject prefab = GetPrefab(tile);
+
+                if (prefab == null)
+                {
+                    Debug.LogError("No prefab assigned for tile " + tile);
+                    
+                    continue;
+                }
+
+                GameObject piece = Instantiate(prefab, parent);
+
+                piece.name = "R" + row.ToString("00") + "_C" + column.ToString("00") + "_" + GetTileName(tile);
+
+                piece.transform.localPosition = new Vector3(column * tileSize, -row * tileSize, 0f);
+
+                float rotation = GetRotation(tile, solvedConnections[row, column]);
+
+                piece.transform.localRotation = Quaternion.Euler(0f, 0f, rotation);
+
+                piece.transform.localScale = Vector3.one;
+
+            }
+        }
     }
     // Update is called once per frame
     void Update()
