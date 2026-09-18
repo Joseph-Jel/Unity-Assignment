@@ -770,6 +770,39 @@ public class LevelGenerator : MonoBehaviour
         gameCamera.orthographicSize = Mathf.Max(halfHeight, sizeNeededForWidth);
     }
 
+
+    private string GetTileName(int tile)
+    {
+        switch (tile)
+        {
+            case 1:
+                return "OutsideCorner";
+
+            case 2:
+                return "OutsideWall";
+
+            case 3:
+                return "InsideCorner";
+
+            case 4:
+                return "InsideWall";
+
+            case 5:
+                return "Pellet";
+
+            case 6:
+                return "PowerPellet";
+
+            case 7:
+                return "TJunction";
+
+            case 8:
+                return "GhostExitWall";
+
+            default:
+                return "Unknown";
+        }
+    }
     // Update is called once per frame
     void Update()
     {
