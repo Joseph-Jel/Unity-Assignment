@@ -1,2 +1,21 @@
 fileFormatVersion: 2
 guid: 3ab81ba65082f16409455d0deb9120a8
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - outsideCornerPrefab: {fileID: 1787463215783899993, guid: 2465f718cc3c51743a34bc85434b3485, type: 3}
+  - insideCornerPrefab: {fileID: 6454469885821015748, guid: 152bf43f403ba1e4db3992041b7437b9, type: 3}
+  - outsideWallPrefab: {fileID: 9213228590943643791, guid: f1a0f7341e5a40f4bbab9a2206076330, type: 3}
+  - insideWallPrefab: {fileID: 7008514068467889139, guid: 1d53f1c496d9ac145bcfe74da584bb5a, type: 3}
+  - pelletPrefab: {fileID: 1173655192265741436, guid: 3b60415354432fd45b74767eaedfaa19, type: 3}
+  - powerPelletPrefab: {fileID: 8012127435717647216, guid: 242f0a57c93c2454ca7948cc7179d8a3, type: 3}
+  - tJunctionPrefab: {fileID: 9195242887256396599, guid: 6723c567dd5e84f41a6ae0eb52de4cba, type: 3}
+  - ghostExitWallPrefab: {fileID: 2188579875985870426, guid: 3ff43d4dfd8342d48a488abafa81a8f3, type: 3}
+  - manualLevel: {instanceID: 0}
+  - gameCamera: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
