@@ -282,6 +282,51 @@ public class LevelGenerator : MonoBehaviour
 
         return false;  
     }
+
+
+    private bool Propagate(List<int>[,] possibilities)
+    {
+        bool changed;
+
+        int rows = possibilities.GetLength(0);
+        int columns = possibilities.GetLength(1);
+
+        do
+        {
+            changed = false;
+
+            for (int row = 0; row < rows; row++)
+            {
+                for (int column = 0; column < columns; column++)
+                {
+                    if (!IsWallTile(fullMap[row, column]))
+                    {
+                        continue;
+                    }
+
+                    List<int> current = possibilities[row, column];
+
+                    for (int i = current.Count - 1; i >= 0; i--)
+                    {
+                        if(!ConnectionPatternIsPossible(row, column, current[i], possibilities))
+                        {
+                            current.RemoveAt(i);
+                            changed = true;
+                        }
+                    }
+
+                    if(current.Count == 0)
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        while (changed);
+
+        return true;
+    }
     // Update is called once per frame
     void Update()
     {
