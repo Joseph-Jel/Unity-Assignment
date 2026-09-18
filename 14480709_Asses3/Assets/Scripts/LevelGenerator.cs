@@ -554,6 +554,15 @@ public class LevelGenerator : MonoBehaviour
 
         GenerateQuadrant(bottomRight, false);
     }
+
+    private Transform CreateQuadrant(Transform parent, string quadrantName)
+    {
+        GameObject quadrant = new GameObject(quadrantName);
+
+        quadrant.transform.SetParent(parent, false);
+
+        return quadrant.transform;
+    }
     // Update is called once per frame
     void Update()
     {
