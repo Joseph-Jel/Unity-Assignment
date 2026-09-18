@@ -407,6 +407,55 @@ public class LevelGenerator : MonoBehaviour
 
         return copy;
     }
+
+    private bool IsWallTile(int tile)
+    {
+        return tile == 1
+            || tile == 2
+            || tile == 3
+            || tile == 4
+            || tile == 5
+            || tile == 6
+            || tile == 7
+            || tile == 8;
+    }
+
+    private bool TilesCanConnect(int first, int second)
+    {
+        if (!IsWallTile(first) || !IsWallTile(second))
+        {
+            return false;
+        }
+
+        if (first == 7 || second == 7)
+        {
+            return true;
+        }
+
+        if (first == 8)
+        {
+            return second == 3
+                || second == 4
+                || second == 8;
+        }
+
+        if (second == 8)
+        {
+            return first == 3
+                || first == 4
+                || first == 8;
+        }
+
+        bool firstOutside = first == 1 || first == 2;
+
+        bool secondOutside = second == 1 || second == 2;
+
+        bool firstInside = first == 3 || first == 4;
+
+        bool secondInside = second == 3 || second == 4; 
+
+        return (firstOutside && secondOutside) || (firstInside && secondInside);
+    }
     // Update is called once per frame
     void Update()
     {
