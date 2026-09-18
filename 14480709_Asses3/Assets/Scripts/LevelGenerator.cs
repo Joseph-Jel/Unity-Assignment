@@ -710,6 +710,66 @@ public class LevelGenerator : MonoBehaviour
         return 0f;
     }
 
+    private float GetTJunctionRotation(int connections)
+    {
+        if (connections == (Left | Right | Down))
+        {
+            return 0f;
+        }
+
+        if (connections == (Up | Down | Left))
+        {
+            return 90f;
+        }
+
+        if (connections == (Up | Left | Right))
+        {
+            return 180f;
+        }
+
+        if (connections == (Up | Right | Down))
+        {
+            return 270f;
+        }
+
+        return 0f;
+    }
+
+
+    private void AdjustCamera()
+    {
+        if (gameCamera == null)
+        {
+            return;
+        }
+
+        int rows = fullMap.GetLength(0);
+
+        int columns = fullMap.GetLength(1);
+
+        float levelWidth = columns * tileSize;
+
+        float levelHeight = rows * tileSize;
+
+        float centreX = ((columns - 1) * tileSize) / 2f;
+
+        float centreY = -((rows - 1) * tileSize) / 2f;
+
+        Vector3 cameraPosition = gameCamera.transform.position;
+
+        gameCamera.transform.position = new Vector3(centreX, centreY, cameraPosition.z);
+
+        gameCamera.orthographic = true;
+
+        float halfHeight = (levelHeight / 2f) + cameraPadding;
+
+        float halfWidth = (levelWidth / 2f) + cameraPadding;
+
+        float sizeNeededForWidth = halfWidth / gameCamera.aspect;
+
+        gameCamera.orthographicSize = Mathf.Max(halfHeight, sizeNeededForWidth);
+    }
+
     // Update is called once per frame
     void Update()
     {
