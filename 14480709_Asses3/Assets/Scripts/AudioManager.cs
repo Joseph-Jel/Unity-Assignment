@@ -6,21 +6,32 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioSource normalGhostMusic;
 
     
-    void Start()
+    private void Start()
     {
         StartCoroutine(PlayIntroThenNormalMusic());
     }
 
     private IEnumerator PlayIntroThenNormalMusic()
     {
+        if (introMusic == null || normalGhostMusic == null)
+        {
+            Debug.LogError("AudioManager: AudioSource reference is missing");
+            yield break;
+        }
+
+        introMusic.loop = false;
+        normalGhostMusic.loop = true;
+
         introMusic.Play();
 
-        float startTime = Time.time;
+        float waitTime = 3f;
 
-        while (introMusic.isPlaying && Time.time - startTime < 3f)
+        if (introMusic.clip != null)
         {
-            yield return null;
+            waitTime = Mathf.Min(3f, introMusic.clip.length);
         }
+
+        yield return new WaitForSeconds(waitTime);
 
         introMusic.Stop();
         normalGhostMusic.Play();
