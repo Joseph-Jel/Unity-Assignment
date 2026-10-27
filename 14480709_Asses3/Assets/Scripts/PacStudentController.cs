@@ -1,5 +1,6 @@
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PacStudentController : MonoBehaviour
 {
@@ -30,6 +31,11 @@ public class PacStudentController : MonoBehaviour
 
     private float lerpElapsedTime;
     private float lerpDuration;
+
+    private static readonly Vector2Int GridUp = new Vector2Int(0, -1);
+    private static readonly Vector2Int GridDown = new Vector2Int(0, 1);
+    private static readonly Vector2Int GridLeft = new Vector2Int(-1, 0);
+    private static readonly Vector2Int GridRight = new Vector2Int(1, 0);
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Start()
@@ -72,24 +78,29 @@ public class PacStudentController : MonoBehaviour
 
     private void GatherInput()
     {
-        if (Input.GetKeyDown(KeyCode.W))
+        if (Keyboard.current == null)
         {
-            lastInput = Vector2Int.up;
+            return;
         }
 
-        if (Input.GetKeyDown(KeyCode.A))
+        if (Keyboard.current.wKey.wasPressedThisFrame)
         {
-            lastInput = Vector2Int.left;
+            lastInput = GridUp;
         }
 
-        if (Input.GetKeyDown(KeyCode.S))
+        if (Keyboard.current.aKey.wasPressedThisFrame)
         {
-            lastInput = Vector2Int.down;
+            lastInput = GridLeft;
         }
 
-        if (Input.GetKeyDown(KeyCode.D))
+        if (Keyboard.current.sKey.wasPressedThisFrame)
         {
-            lastInput = Vector2Int.right;
+            lastInput = GridDown;
+        }
+
+        if (Keyboard.current.dKey.wasPressedThisFrame)
+        {
+            lastInput = GridRight;
         }
     }
 
@@ -164,19 +175,19 @@ public class PacStudentController : MonoBehaviour
 
         animator.speed = 1f;
 
-        if (direction == Vector2Int.up)
+        if (direction == GridUp)
         {
             animator.Play("PacStudent_Up");
         }
-        else if (direction == Vector2Int.down)
+        else if (direction == GridDown)
         {
             animator.Play("PacStudent_Down");
         }
-        else if (direction == Vector2Int.left)
+        else if (direction == GridLeft)
         {
             animator.Play("PacStudent_Left");
         }
-        else if (direction == Vector2Int.right)
+        else if (direction == GridRight)
         {
             animator.Play("PacStudent_Right");
         }
