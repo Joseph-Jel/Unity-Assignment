@@ -987,6 +987,19 @@ public class LevelGenerator : MonoBehaviour
         return tile == 0 || tile == 5 || tile == 6;
     }
 
+    public Vector3 GridToWorld(Vector2Int gridPosition)
+    {
+        return new Vector3(gridPosition.x * tileSize, -gridPosition.y * tileSize, 0f);
+    }
+
+    public Vector2Int WorldToGrid(Vector3 worldPosition)
+    {
+        int column = Mathf.RoundToInt(worldPosition.x / tileSize);
+
+        int row = Mathf.RoundToInt(-worldPosition.y / tileSize);
+
+        return new Vector2Int(column, row);
+    }
     // Update is called once per frame
     void Update()
     {
