@@ -957,6 +957,36 @@ public class LevelGenerator : MonoBehaviour
         }
     }
 
+    public bool IsInsideGrid(Vector2Int gridPosition)
+    {
+        if (!IsReady)
+        {
+            return false;
+        }
+
+        return gridPosition.x >= 0
+            && gridPosition.x < FullColumns
+            && gridPosition.y >= 0
+            && gridPosition.y < FullRows;
+    }
+
+    public int GetTileAtGrid(Vector2Int gridPosition)
+    {
+        if (!IsInsideGrid(gridPosition))
+        {
+            return -1;
+        }
+
+        return fullMap[gridPosition.y, gridPosition.x];
+    }
+
+    public bool IsWalkable(Vector2Int gridPosition)
+    {
+        int tile = GetTileAtGrid(gridPosition);
+
+        return tile == 0 || tile == 5 || tile == 6;
+    }
+
     // Update is called once per frame
     void Update()
     {
