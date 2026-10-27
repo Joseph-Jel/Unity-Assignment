@@ -4,6 +4,18 @@ using UnityEngine.InputSystem;
 
 public class PacStudentController : MonoBehaviour
 {
+    [Header("Game")]
+    [SerializeField] private GameManager gameManager;
+    [SerializeField] private AudioManager gameAudio;
+    [SerializeField] private Collider2D interactionCollider;
+
+    [Header("Collision Effects")]
+    [SerializeField] private ParticleSystem wallBumpParticlePrefab;
+    [SerializeField] private ParticleSystem deathParticlePrefab;
+
+    [Header("Death")]
+    [SerializeField] private string deathAnimationState = "PacStudent_Dead";
+
     [Header("Movement")]
     [SerializeField] private LevelGenerator levelGenerator;
     [SerializeField] private float moveSpeed = 5f;
@@ -23,6 +35,9 @@ public class PacStudentController : MonoBehaviour
     private Vector2Int currentInput = Vector2Int.zero;
 
     private bool isLerping = false;
+    private bool controlEnabled = false;
+    private bool wallBumpLocked = false;
+    private bool teleportLocked = false;
 
     private Vector2Int currentGridPosition;
 
@@ -37,12 +52,14 @@ public class PacStudentController : MonoBehaviour
     private static readonly Vector2Int GridLeft = new Vector2Int(-1, 0);
     private static readonly Vector2Int GridRight = new Vector2Int(1, 0);
 
+    private Vector2Int startingGridPosition;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Start()
     {
         currentGridPosition = levelGenerator.WorldToGrid(transform.position);
 
-        PlayDirectionAnimation(Vector2Int.right);
+        PlayDirectionAnimation(GridRight);
 
         if (animator != null)
         {
@@ -53,11 +70,18 @@ public class PacStudentController : MonoBehaviour
         {
             dustParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         }
+
+        startingGridPosition = currentGridPosition;
     }
 
     // Update is called once per frame
     private void Update()
     {
+        if (!controlEnabled)
+        {
+            return;
+        }
+
         GatherInput();
 
         if (levelGenerator == null || !levelGenerator.IsReady)
@@ -80,27 +104,31 @@ public class PacStudentController : MonoBehaviour
     {
         if (Keyboard.current == null)
         {
-            return;
+            return; 
         }
 
         if (Keyboard.current.wKey.wasPressedThisFrame)
         {
             lastInput = GridUp;
+            wallBumpLocked = false;
         }
 
         if (Keyboard.current.aKey.wasPressedThisFrame)
         {
             lastInput = GridLeft;
+            wallBumpLocked = false;
         }
 
         if (Keyboard.current.sKey.wasPressedThisFrame)
         {
             lastInput = GridDown;
+            wallBumpLocked = false;
         }
 
         if (Keyboard.current.dKey.wasPressedThisFrame)
         {
             lastInput = GridRight;
+            wallBumpLocked = false;
         }
     }
 
@@ -119,7 +147,205 @@ public class PacStudentController : MonoBehaviour
             return;
         }
 
+        Vector2Int bumpDirection = currentInput != Vector2Int.zero ? currentInput : lastInput;
+
+        if(!wallBumpLocked && bumpDirection != Vector2Int.zero)
+        {
+            PlayWallBump(bumpDirection);
+
+            wallBumpLocked = true;
+        }
+
         StopMovementEffects();
+    }
+
+    private void PlayWallBump(Vector2Int direction)
+    {
+        if  (gameAudio != null)
+        {
+            gameAudio.PlayWallCollision();
+        }
+
+        if (wallBumpParticlePrefab == null)
+        {
+            return;
+        }
+
+        Vector3 worldDirection = new Vector3(direction.x, -direction.y, 0f);
+
+        Vector3 collisionPoint = transform.position + worldDirection * (levelGenerator.TileSize * 0.5f);
+
+        ParticleSystem effect = Instantiate(wallBumpParticlePrefab, collisionPoint, Quaternion.identity);
+
+        effect.Play();
+
+        ParticleSystem.MainModule main = effect.main;
+
+        Destroy(effect.gameObject, main.duration + main.startLifetime.constantMax);
+    }
+
+    public void SetControlEnabled(bool enabled)
+    {
+        controlEnabled = enabled;
+
+        if (!enabled)
+        {
+            isLerping = false;
+
+            StopMovementEffects();
+        }
+    }
+
+    public void SetCollisionEnabled(bool enabled)
+    {
+        if (interactionCollider != null)
+        {
+            interactionCollider.enabled = enabled;
+        }
+    }
+
+    public void ResetToStart()
+    {
+        isLerping = false;
+
+        currentGridPosition = startingGridPosition;
+
+        transform.position = levelGenerator.GridToWorld(startingGridPosition);
+
+        lastInput = Vector2Int.zero;
+        currentInput = Vector2Int.zero;
+
+
+        wallBumpLocked = false;
+
+        PlayDirectionAnimation(GridRight);
+
+        if (animator != null)
+        {
+            animator.speed = 0f;
+        }
+
+        StopMovementEffects();
+    }
+
+    public void PlayDeath()
+    {
+        isLerping = false;
+
+        StopMovementEffects();
+
+        if (animator != null)
+        {
+            animator.speed = 1f;
+            animator.Play(deathAnimationState);
+        }
+
+        if (deathParticlePrefab != null)
+        {
+            ParticleSystem effect = Instantiate(deathParticlePrefab, transform.position, Quaternion.identity);
+
+            effect.Play();
+
+            ParticleSystem.MainModule main = effect.main;
+
+            Destroy(effect.gameObject, main.duration + main.startLifetime.constantMax);
+        }    
+    }
+
+    public void TeleportTo(Vector2Int destinationGrid, Vector2Int inwardDirection)
+    {
+        if (teleportLocked)
+        {
+            return;
+        }
+
+        teleportLocked = true;
+
+        isLerping = false;
+
+        currentGridPosition = destinationGrid;
+
+        transform.position = levelGenerator.GridToWorld(destinationGrid);
+
+        currentInput = inwardDirection;
+
+        lastInput = inwardDirection;
+
+        StartCoroutine(UnlockTeleporter());
+    }
+
+    private System.Collections.IEnumerator UnlockTeleporter()
+    {
+        yield return new WaitForSeconds(0.15f);
+
+        teleportLocked = false;
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (!controlEnabled)
+        {
+            return;
+        }
+
+        Teleporter teleporter = other.GetComponent<Teleporter>();
+
+        if (teleporter != null)
+        {
+            TeleportTo(teleporter.DestinationGrid, teleporter.InwardDirection);
+
+            return;
+        }
+
+        if (other.CompareTag("Pellet"))
+        {
+            Vector2Int pelletGrid = levelGenerator.WorldToGrid(other.transform.position);
+
+            levelGenerator.MarkTileEmpty(pelletGrid);
+
+            Destroy(other.gameObject);
+
+            gameManager.CollectPellet();
+
+            return;
+        }
+
+        if (other.CompareTag("PowerPellet"))
+        {
+            Vector2Int pelletGrid = levelGenerator.WorldToGrid(other.transform.position);
+
+            levelGenerator.MarkTileEmpty(pelletGrid);
+
+            Destroy(other.gameObject);
+
+            gameManager.CollectPowerPellet();
+
+            return;
+        }
+
+        if (other.CompareTag("Cherry"))
+        {
+            Destroy(other.gameObject);
+
+            gameManager.CollectCherry();
+
+            return;
+        }
+
+        if (other.CompareTag("Ghost"))
+        {
+            GhostStateController ghost = other.GetComponent<GhostStateController>();
+
+            if (ghost == null)
+            {
+                ghost = other.GetComponentInParent<GhostStateController>();
+            }
+
+            if (ghost != null)
+            {
+                gameManager.HandleGhostCollision(ghost);
+            }
+        }
     }
 
     private bool CanMove(Vector2Int direction)

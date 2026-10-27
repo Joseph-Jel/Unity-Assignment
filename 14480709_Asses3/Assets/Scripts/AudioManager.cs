@@ -2,39 +2,91 @@ using UnityEngine;
 using System.Collections;
 public class AudioManager : MonoBehaviour
 {
-    [SerializeField] private AudioSource introMusic;
-    [SerializeField] private AudioSource normalGhostMusic;
+    [Header("Audio Sources")]
+    [SerializeField] private AudioSource musicSource;
+    [SerializeField] private AudioSource sfxSource;
 
-    
-    private void Start()
+    [Header("Background Music")]
+    [SerializeField] private AudioClip introMusic;
+    [SerializeField] private AudioClip normalGhostMusic;
+    [SerializeField] private AudioClip scaredGhostMusic;
+    [SerializeField] private AudioClip deadGhostMusic;
+
+    [Header("Sound Effects")]
+    [SerializeField] private AudioClip wallCollisionSound;
+    [SerializeField] private AudioClip cherryEatSound;
+    [SerializeField] private AudioClip ghostEatSound;
+    [SerializeField] private AudioClip pacStudentDeathSound;
+
+    public void PlayIntroMusic()
     {
-        StartCoroutine(PlayIntroThenNormalMusic());
+        PlayMusic(introMusic, false);
     }
 
-    private IEnumerator PlayIntroThenNormalMusic()
+    public void PlayNormalMusic()
     {
-        if (introMusic == null || normalGhostMusic == null)
+        PlayMusic(normalGhostMusic, true);
+    }
+
+    public void PlayScaredMusic()
+    {
+        PlayMusic(scaredGhostMusic, true);
+    }
+
+    public void PlayDeadMusic()
+    {
+        PlayMusic(deadGhostMusic, true);
+    }
+
+    public void StopMusic()
+    {
+        musicSource.Stop();
+    }
+
+    private void PlayMusic(AudioClip clip, bool loop)
+    {
+        if (clip == null || musicSource == null)
         {
-            Debug.LogError("AudioManager: AudioSource reference is missing");
-            yield break;
+            return;
         }
 
-        introMusic.loop = false;
-        normalGhostMusic.loop = true;
-
-        introMusic.Play();
-
-        float waitTime = 3f;
-
-        if (introMusic.clip != null)
+        if (musicSource.clip == clip && musicSource.isPlaying)
         {
-            waitTime = Mathf.Min(3f, introMusic.clip.length);
+            return; 
         }
 
-        yield return new WaitForSeconds(waitTime);
+        musicSource.clip = clip;
+        musicSource.loop = loop;
 
-        introMusic.Stop();
-        normalGhostMusic.Play();
+        musicSource.Play();
+    }
+
+    private void PlaySFX(AudioClip clip)
+    {
+        if (clip != null && sfxSource != null)
+        {
+            sfxSource.PlayOneShot(clip);
+        }
+    }
+
+    public void PlayWallCollision()
+    {
+        PlaySFX(wallCollisionSound);
+    }
+
+    public void PlayCherryEat()
+    {
+        PlaySFX(cherryEatSound);
+    }
+
+    public void PlayGhostEat()
+    {
+        PlaySFX(ghostEatSound);
+    }
+
+    public void PlayPacStudentDeath()
+    {
+        PlaySFX(pacStudentDeathSound);
     }
     // Update is called once per frame
     void Update()

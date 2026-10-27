@@ -1000,6 +1000,17 @@ public class LevelGenerator : MonoBehaviour
 
         return new Vector2Int(column, row);
     }
+
+    public void MarkTileEmpty(Vector2Int gridPosition)
+    {
+        if (!IsInsideGrid(gridPosition))
+        {
+            return;
+        }
+
+        fullMap[gridPosition.y, gridPosition.x] = 0;
+
+    }
     // Update is called once per frame
     void Update()
     {

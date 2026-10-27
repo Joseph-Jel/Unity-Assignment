@@ -980,7 +980,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 8300000, guid: 3dbedfcbdefed5749895fc42724e5fd5, type: 3}
+  m_Resource: {fileID: 8300000, guid: 544bcf2ce2f274b42be8a95f4ca60954, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -1215,6 +1215,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1091671966}
   - component: {fileID: 1091671965}
+  - component: {fileID: 1091671967}
   m_Layer: 0
   m_Name: StartMenuController
   m_TagString: Untagged
@@ -1251,6 +1252,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1091671967
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1091671964}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70b274e48894ba544b547be1a8fc31e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StartSceneHighScoreUI
+  level1HighScoreText: {fileID: 1764603357}
+  level1BestTimeText: {fileID: 1261625694}
 --- !u!1 &1161655166
 GameObject:
   m_ObjectHideFlags: 0
