@@ -895,6 +895,68 @@ public class LevelGenerator : MonoBehaviour
             && column >= 0
             && column < levelMap.GetLength(1);
     }
+
+    public bool IsReady
+    {
+        get
+        {
+            return fullMap != null;
+        }
+    }
+
+    public float TileSize
+    {
+        get
+        {
+            return tileSize;
+        }
+    }
+
+    public int FullRows
+    {
+        get
+        {
+            return fullMap != null ? fullMap.GetLength(0) : 0;
+        }
+    }    
+
+    public int FullColumns
+    {
+        get
+        {
+            return fullMap != null ? fullMap.GetLength(1) : 0;
+        }
+    }
+
+    public float LevelWidth
+    {
+        get
+        {
+            return FullColumns * tileSize;
+        }
+    }
+
+    public float LevelHeight
+    {
+        get
+        {
+            return FullRows * tileSize;
+        }
+    }
+
+    public Vector3 LevelCenter
+    {
+        get
+        {
+            if (!IsReady)
+            {
+                return Vector3.zero;
+            }
+
+            return new Vector3(((FullColumns - 1) * tileSize) / 2f, -((FullRows - 1) * tileSize) / 2f, 0f);
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
