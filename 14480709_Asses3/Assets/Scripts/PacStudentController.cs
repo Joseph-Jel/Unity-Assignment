@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PacStudentController : MonoBehaviour
@@ -49,8 +50,201 @@ public class PacStudentController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        
+        GatherInput();
+
+        if (levelGenerator == null || !levelGenerator.IsReady)
+        {
+            return;
+        }
+
+        if (isLerping)
+        {
+            UpdateLerp();
+        }
+
+        if (!isLerping)
+        {
+            TryStartNextMove();
+        }
+    }
+
+    private void GatherInput()
+    {
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            lastInput = Vector2Int.up;
+        }
+
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            lastInput = Vector2Int.left;
+        }
+
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            lastInput = Vector2Int.down;
+        }
+
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            lastInput = Vector2Int.right;
+        }
+    }
+
+    private void TryStartNextMove()
+    {
+        if (lastInput != Vector2Int.zero && CanMove(lastInput))
+        {
+            currentInput = lastInput;
+            StartMove(currentInput);
+            return;
+        }
+
+        if (currentInput != Vector2Int.zero && CanMove(currentInput))
+        {
+            StartMove(currentInput);
+            return;
+        }
+
+        StopMovementEffects();
+    }
+
+    private bool CanMove(Vector2Int direction)
+    {
+        Vector2Int nextGridPosition = currentGridPosition + direction;
+
+        return levelGenerator.IsWalkable(nextGridPosition);
+    }
+
+    private void StartMove(Vector2Int direction)
+    {
+        Vector2Int targetGridPosition = currentGridPosition + direction;
+
+        lerpStartPosition = levelGenerator.GridToWorld(currentGridPosition); 
+
+        lerpTargetPosition = levelGenerator.GridToWorld(targetGridPosition);
+
+        float distance = Vector3.Distance(lerpStartPosition, lerpTargetPosition);
+
+        lerpDuration = distance / moveSpeed;
+        lerpElapsedTime = 0f;
+
+        isLerping = true;
+
+        PlayDirectionAnimation(direction);
+        StartMovementEffects(targetGridPosition);
+    }
+
+    private void UpdateLerp()
+    {
+        lerpElapsedTime += Time.deltaTime;
+
+        float t = Mathf.Clamp01(lerpElapsedTime / lerpDuration);
+
+        transform.position = Vector3.Lerp(lerpStartPosition, lerpTargetPosition, t);
+
+        if (t >= 1f)
+        {
+            transform.position = lerpTargetPosition;
+
+            currentGridPosition = levelGenerator.WorldToGrid(lerpTargetPosition);
+
+            isLerping = false;
+        }
+    }
+
+    private void PlayDirectionAnimation(Vector2Int direction)
+    {
+        if (animator == null)
+        {
+            return;
+        }
+
+        animator.speed = 1f;
+
+        if (direction == Vector2Int.up)
+        {
+            animator.Play("PacStudent_Up");
+        }
+        else if (direction == Vector2Int.down)
+        {
+            animator.Play("PacStudent_Down");
+        }
+        else if (direction == Vector2Int.left)
+        {
+            animator.Play("PacStudent_Left");
+        }
+        else if (direction == Vector2Int.right)
+        {
+            animator.Play("PacStudent_Right");
+        }
+    }
+
+    private void StartMovementEffects(Vector2Int targetGridPosition)
+    {
+        if (animator != null)
+        {
+            animator.speed = 1f;
+        }
+
+        if (dustParticles != null && !dustParticles.isPlaying)
+        {
+            dustParticles.Play();
+        }
+
+        PlayMovementAudio(targetGridPosition);
+    }
+
+    private void StopMovementEffects()
+    {
+        if (animator != null)
+        {
+            animator.speed = 0f;
+        }
+
+        if (movementAudioSource != null && movementAudioSource.isPlaying)
+        {
+            movementAudioSource.Stop();
+        }
+
+        if (dustParticles != null && dustParticles.isPlaying)
+        {
+            dustParticles.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+        }
+    }
+
+    private void PlayMovementAudio(Vector2Int targetGridPosition)
+    {
+        if (movementAudioSource == null)
+        {
+            return;
+        }
+
+        int targetTile = levelGenerator.GetTileAtGrid(targetGridPosition);
+
+        AudioClip desiredClip;
+
+        if (targetTile == 5 || targetTile == 6)
+        {
+            desiredClip = eatingPelletAudio;
+        }
+        else
+        {
+            desiredClip = movingAudio;
+        }
+
+        if (desiredClip == null)
+        {
+            return;
+        }
+
+        if (movementAudioSource.clip != desiredClip || !movementAudioSource.isPlaying)
+        {
+            movementAudioSource.clip = desiredClip;
+            movementAudioSource.loop = true;
+            movementAudioSource.Play();
+        }
     }
 }
