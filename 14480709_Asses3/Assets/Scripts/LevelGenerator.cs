@@ -986,6 +986,25 @@ public class LevelGenerator : MonoBehaviour
 
         return tile == 0 || tile == 5 || tile == 6;
     }
+    
+    public bool IsGhostWalkable(Vector2Int gridPosition, bool allowGhostExitWall)
+    {
+        int tile = GetTileAtGrid(gridPosition);
+
+        if (tile == 0 ||
+            tile == 5 ||
+            tile == 6)
+        {
+            return true;
+        }
+
+        if (allowGhostExitWall && tile == 8)
+        {
+            return true;
+        }
+
+        return false;
+    }
 
     public Vector3 GridToWorld(Vector2Int gridPosition)
     {

@@ -54,6 +54,14 @@ public class PacStudentController : MonoBehaviour
 
     private Vector2Int startingGridPosition;
 
+
+    public float MoveSpeed
+    {
+        get
+        {
+            return moveSpeed;
+        }
+    }    
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Start()
     {

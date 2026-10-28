@@ -16,7 +16,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int startingLives = 3;
     [SerializeField] private float scaredDuration = 10f;
     [SerializeField] private float recoveringTime = 3f;
-    [SerializeField] private float deadGhostDuration = 3f;
     [SerializeField] private float deathSequenceDuration = 2f;
 
     private int score;
@@ -312,57 +311,13 @@ public class GameManager : MonoBehaviour
     
     private void EatGhost(GhostStateController ghost)
     {
-        if (ghost == null)
-        {
-            return;
-        }
 
         ghost.SetState(GhostState.Dead);
-        ghost.SetMovementEnabled(false);
 
         AddScore(300);
 
-        if (audioManager != null)
-        {
-            audioManager.PlayGhostEat();
-        }
+        audioManager.PlayGhostEat();
 
-        RefreshBackgroundMusic();
-
-        StartCoroutine(RecoverDeadGhost(ghost));
-    }
-
-    private IEnumerator RecoverDeadGhost(GhostStateController ghost)
-    {
-        yield return new WaitForSeconds(deadGhostDuration);
-
-        if (ghost == null)
-        {
-            yield break;
-        }
-
-        if (ghost.CurrentState != GhostState.Dead)
-        {
-            yield break;
-        }
-
-        if (ghostScaredTimer <= 0f)
-        {
-            ghost.SetState(GhostState.Normal);
-        }
-        else if (ghostScaredTimer <= recoveringTime)
-        {
-            ghost.SetState(GhostState.Recovering);
-        }
-        else
-        {
-            ghost.SetState(GhostState.Scared);
-        }
-
-        if (roundActive)
-        {
-            ghost.SetMovementEnabled(true);
-        }
 
         RefreshBackgroundMusic();
     }
@@ -469,7 +424,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void RefreshBackgroundMusic()
+    public void RefreshBackgroundMusic()
     {
         if (audioManager == null)
         {
@@ -568,5 +523,29 @@ public class GameManager : MonoBehaviour
 
             Debug.Log("New high score saved: " +  score + "Time: " + gameTime); 
         }
+    }
+
+    public GhostState GetGlobalGhostState()
+    {
+        if (ghostScaredTimer <= 0f)
+        {
+            return GhostState.Normal;
+        }
+
+        if (ghostScaredTimer <= recoveringTime)
+        {
+            return GhostState.Recovering;
+        }
+
+        return GhostState.Scared;
+    }
+
+    public void ReviveGhost(GhostStateController ghost)
+    {
+        GhostState state = GetGlobalGhostState();
+
+        ghost.SetState(state);
+
+        RefreshBackgroundMusic();
     }
 }
